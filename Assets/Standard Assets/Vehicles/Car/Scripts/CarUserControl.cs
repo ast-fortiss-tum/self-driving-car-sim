@@ -10,6 +10,9 @@ namespace UnityStandardAssets.Vehicles.Car
         private CarController m_Car;
         private Steering s;
 
+		// new fields
+		public float CTE { get; set; }
+
         private void Awake()
         {
             m_Car = GetComponent<CarController>();

@@ -172,7 +172,7 @@ namespace UnityStandardAssets.Utility
                 CachePositionsAndDistances();
                 Length = distances[distances.Length - 1];
 
-                Gizmos.color = selected ? Color.yellow : new Color(1, 1, 0, 0.5f);
+				Gizmos.color = selected ? Color.red : new Color(1, 1, 0, 0.5f);
                 Vector3 prev = Waypoints[0].position;
                 if (smoothRoute)
                 {

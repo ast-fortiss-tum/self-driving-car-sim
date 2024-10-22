@@ -27,7 +27,7 @@
 
 #endregion
 
-//#define SOCKET_IO_DEBUG			// Uncomment this for debug
+// #define SOCKET_IO_DEBUG			// Uncomment this for debug
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,7 +42,8 @@ namespace SocketIO
 	{
 		#region Public Properties
 
-		public string url = "ws://127.0.0.1:4567/socket.io/?EIO=4&transport=websocket";
+		// public string url = "ws://127.0.0.1:4567/socket.io/?EIO=4&transport=websocket";
+		public string url;
 		public bool autoConnect = true;
 		public int reconnectDelay = 5;
 		public float ackExpirationTime = 1800f;
@@ -99,6 +100,13 @@ namespace SocketIO
 			sid = null;
 			packetId = 0;
 
+			GameObject _app = GameObject.Find("__app");
+			if (_app != null) {
+				AppConfigurationManager confManager = _app.GetComponent<AppConfigurationManager> ();
+				url = "ws://127.0.0.1:" + confManager.conf.port + "/socket.io/?EIO=4&transport=websocket";
+			}
+
+			Debug.Log("Connecting to url: " + url);
 			ws = new WebSocket(url);
 			ws.OnOpen += OnOpen;
 			ws.OnMessage += OnMessage;
@@ -187,6 +195,9 @@ namespace SocketIO
 
 		public void On(string ev, Action<SocketIOEvent> callback)
 		{
+			foreach (var kvp in handlers) {
+				Debug.Log(kvp.Key);
+			}
 			if (!handlers.ContainsKey(ev)) {
 				handlers[ev] = new List<Action<SocketIOEvent>>();
 			}
@@ -237,6 +248,11 @@ namespace SocketIO
 			EmitMessage(++packetId, string.Format("[\"{0}\",{1}]", ev, data));
 			ackList.Add(new Ack(packetId, action));
 		}
+		
+		public void Emit(string ev, string data)
+		{
+			EmitMessage(-1, string.Format("[\"{0}\",{1}]", ev, data));
+		}
 
 		#endregion
 
@@ -252,6 +268,7 @@ namespace SocketIO
 					webSocket.Connect();
 				}
 			}
+			// Debug.Log("Closing web socket after disconnection.");
 			webSocket.Close();
 		}
 
@@ -280,6 +297,7 @@ namespace SocketIO
 					}
 					
 					if(!thPong){
+						// Debug.Log("Closing websocket due to ping without pong.");
 						webSocket.Close();
 					}
 
@@ -325,7 +343,6 @@ namespace SocketIO
 			debugMethod.Invoke("[SocketIO] Raw message: " + e.Data);
 			#endif
 			Packet packet = decoder.Decode(e);
-
 			switch (packet.enginePacketType) {
 				case EnginePacketType.OPEN: 	HandleOpen(packet);		break;
 				case EnginePacketType.CLOSE: 	EmitEvent("close");		break;
@@ -379,12 +396,12 @@ namespace SocketIO
 
 		private void OnError(object sender, ErrorEventArgs e)
 		{
-			EmitEvent("error");
+			EmitEvent("error: " + e.Message );
 		}
 
 		private void OnClose(object sender, CloseEventArgs e)
 		{
-			EmitEvent("close");
+			EmitEvent("close: " + e.Reason );
 		}
 
 		private void EmitEvent(string type)

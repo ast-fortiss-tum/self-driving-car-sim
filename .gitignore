@@ -1,4 +1,4 @@
-﻿ # Unity generated
+ # Unity generated
 Builds/
 Temp/
 Library/
@@ -22,3 +22,10 @@ IMG
 driving_log.csv
 Archive.zip
 sdc.app
+.vs
+ProjectSettings/ProjectVersion.txt
+Logs
+
+.vsconfig
+settings.json
+HUDFPS.cs.meta
