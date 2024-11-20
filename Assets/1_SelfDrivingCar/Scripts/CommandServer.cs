@@ -148,7 +148,15 @@ public class CommandServer : MonoBehaviour
 				data ["steering_angle"] = _carController.CurrentSteerAngle.ToString ("N4");
 				data ["throttle"] = _carController.AccelInput.ToString ("N4");
 				data ["speed"] = _carController.CurrentSpeed.ToString ("N4");
-				data["hit"] = _carController.GetLastCollision();
+				data["hit"] =    _carController.GetLastCollision();
+				data["angle1"] = _carController.transform.rotation[0].ToString ("N4");
+				data["angle2"] = _carController.transform.rotation[1].ToString ("N4");
+				data["angle3"] = _carController.transform.rotation[2].ToString ("N4");
+				data["angle4"] = _carController.transform.rotation[3].ToString ("N4");
+				data["angle5"] = _carController.transform.eulerAngles[0].ToString ("N4");
+				data["angle6"] = _carController.transform.eulerAngles[1].ToString ("N4");
+				data["angle7"] = _carController.transform.eulerAngles[2].ToString ("N4");
+				data["angl"] =   _carController.transform.eulerAngles[1].ToString ("N4");
 				_carController.ClearLastCollision();
 
 				if (pm != null)
